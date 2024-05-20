@@ -1,0 +1,163 @@
+
+{% extends 'core/base.html' %}
+
+{% block head %}
+    {{ block.super }}
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Helvetica', sans-serif; 
+        }
+
+        .signup-form {
+            margin-top: 50px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .title {
+            color: #3273dc;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            font-family: sans-serif;         }
+
+         .title {
+            
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background-color: #3273dc;
+            transition: all 0.3s;
+        }
+
+        .title:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .label {
+            color: #4a4a4a;
+        }
+
+        .input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .help {
+            color: #999;
+            font-size: 0.8em;
+            margin-top: -8px;
+            margin-bottom: 10px;
+        }
+
+        .button {
+            background-color: #3273dc;
+            color: #ffffff;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="columns">
+            <div class="column is-6 is-offset-3">
+                <div class="signup-form box">
+                    <h1 class="title">Sign Up</h1>
+                    <form method="post" action=".">
+                        {% csrf_token %}
+
+                        <div class="field">
+                            <label for="username" class="label">Username:</label>
+                            <div class="control">
+                                <input type="text" id="username" name="username" class="input" required placeholder="Enter your username">
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="email" class="label">Email:</label>
+                            <div class="control">
+                                <input type="email" id="email" name="email" class="input" placeholder="Enter your email">
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="address" class="label">Address:</label>
+                            <div class="control">
+                                <input type="text" id="address" name="address" class="input" placeholder="Enter your address">
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="zip_code" class="label">Zip Code:</label>
+                            <div class="control">
+                                <input type="text" id="zip_code" name="zip_code" class="input" placeholder="Enter your zip code">
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="gender" class="label">Gender:</label>
+                            <div class="control">
+                                <div class="select">
+                                    <select id="gender" name="gender" class="is-fullwidth">
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="password" class="label">Password:</label>
+                            <div class="control">
+                                <input type="password" id="password" name="password" class="input" required placeholder="Enter your password">
+                                <p class="help">Your password must contain at least 8 characters, not be too similar to your other personal information, and not be entirely numeric.</p>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="password_confirm" class="label">Password Confirmation:</label>
+                            <div class="control">
+                                <input type="password" id="password_confirm" name="password_confirm" class="input" required placeholder="Enter the same password as before">
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="account_type" class="label">Account Type:</label>
+                            <div class="control">
+                                <div class="select">
+                                    <select id="account_type" name="account_type" class="is-fullwidth">
+                                        <option value="jobseeker" selected>Job Seeker</option>
+                                        <option value="employer">Employer</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="control">
+                                <button type="submit" class="button is-success is-fullwidth">Sign Up</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="columns">
+            <div class="column is-8 is-offset-2">
+                <h1 class="title">{{ job.title }} ({{ job.get_status_display }})</h1>
+
+                <p class="subtitle is-4">{{ job.short_description }}</p>
+
+                <p class="content">{{ job.long_description }}</p>
+
+                <hr>
+
+                <h2 class="subtitle is-4">Company Details</h2>
+
+                <ul>
+                    <li><strong>Company name:</strong> {{ job.company_name }}</li>
+                    {% if job.company_address %}<li><strong>Company address:</strong> {{ job.company_address }}</li>{% endif %}
+                    {% if job.company_zipcode %}<li><strong>Company zipcode:</strong> {{ job.company_zipcode }}</li>{% endif %}
+                    {% if job.company_place %}<li><strong>Company place:</strong> {{ job.company_place }}</li>{% endif %}
+                    {% if job.company_country %}<li><strong>Company country:</strong> {{ job.company_country }}</li>{% endif %}
+                    <li><strong>Company size:</strong> {{ job.get_company_size_display }}</li>
+                </ul>
+
+                <br>
+
+                {% if job.status == 'active' %}
+                    <div class="button-container">
+                        <a href="{% url 'apply_for_job' job.id %}" class="button is-success">Apply For Job</a>
+                    </div>
+                {% else %}
+                    <p class="has-text-danger">This job is not available anymore.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block head %}
+    {{ block.super }}
+    <style>
+        /* Custom CSS for job details page */
+        .container {
+            margin-top: 20px;
+        }
+
+        .title {
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            color: #3273dc;
+        }
+
+        .content {
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin-bottom: 20px; 
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .button-container {
+            margin-top: 20px; 
+        }
+
+        .has-text-danger {
+            color: #ff3860;
+        }
+    </style>
+{% endblock %}

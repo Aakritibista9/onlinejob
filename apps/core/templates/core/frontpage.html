@@ -1,0 +1,82 @@
+
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <!-- Section for displaying the newest jobs -->
+    <section class="section">
+        <div class="container">
+            <h2 class="subtitle has-text-centered">Newest jobs</h2>
+
+            <!-- Multiline columns to display job cards -->
+            <div class="columns is-multiline">
+                {% for job in jobs %}
+                    <div class="column is-4">
+                        <div class="card job-card">
+                            <div class="card-content">
+                                <p class="title is-4 job-title">{{ job.title }}</p>
+                                <!-- Subtitle showing the job creation date -->
+                                <p class="subtitle is-6 has-text-grey">{{ job.created_at }}</p>
+
+                                <div class="content">
+                                    {{ job.short_description }}
+                                    <hr>
+                                    <a href="{% url 'job_detail' job.id %}" class="button is-info is-fullwidth">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+
+    <style>
+        .job-card {
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .job-card .card-content {
+            padding: 20px;
+        }
+
+        .job-card .job-title {
+            color: #3273dc;
+            font-size: 1.3em; 
+            margin-bottom: 50px;
+        }
+
+        .job-card .subtitle {
+            color: #555;
+        }
+
+        .job-card .content {
+            margin-top: 15px;
+            color: #777;
+        }
+
+        .job-card hr {
+            margin: 15px 0;
+            border: 0;
+            border-top: 1px solid #ddd;
+        }
+
+        .job-card .button {
+            background-color: #3273dc;
+            color: #ffffff;
+            border: none;
+        }
+
+        .job-card .button:hover {
+            background-color: #205493;
+        }
+    </style>
+{% endblock %}

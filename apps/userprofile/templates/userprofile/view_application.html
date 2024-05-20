@@ -1,0 +1,68 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="columns">
+            <div class="column is-8 is-offset-2">
+                <h1 class="title">View Application</h1>
+
+                <h2 class="subtitle">{{ application.job.title }}</h2>
+
+                <small>Date added: {{ application.created_at }}</small>
+
+                <div class="content">
+                    <p><strong>Content: </strong><br>{{ application.content }}</p>
+
+                    <p><strong>Experience: </strong><br>{{ application.experience }}</p>
+
+                    <hr>
+                    <h2 class="subtitle">Conversation</h2>
+
+                    {% for message in application.conversationmessages.all %}
+                        <div class="notification">
+                            <b>{{ message.created_by.username }} - {{ message.created_at|timesince }} ago</b><br>
+                            {{ message.content }}
+                        </div>
+                    {% empty %}
+                        <p>No messages yet....</p>
+                    {% endfor %}
+
+                    <form method="post" action=".">
+                        {% csrf_token  %}
+
+                        <div class="field">
+                            <label for="id_content" class="label">Your Message:</label>
+                            <div class="control">
+                                <textarea class="textarea" placeholder="Your message" name="content" id="id_content"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="control">
+                                <button class="button is-success">Send</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block head %}
+    {{ block.super }}
+    <style>
+        /* Add your custom CSS styles here */
+        .container {
+            margin-top: 20px;
+        }
+
+        .subtitle {
+            margin-bottom: 10px;
+        }
+
+        .notification {
+            margin-bottom: 15px;
+        }
+    </style>
+{% endblock %}

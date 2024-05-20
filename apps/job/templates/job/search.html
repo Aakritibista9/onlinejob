@@ -1,0 +1,372 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Portal Search</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .search-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px 0 0 5px;
+            width: 70%;
+            outline: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            background-color: #3273dc;
+            color: #fff;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #205493;
+        }
+
+        .results-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .job-post {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .job-post:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .job-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3273dc;
+        }
+
+        .company-name {
+            font-size: 18px;
+            color: #555;
+        }
+
+        .no-results {
+            color: #555;
+        }
+
+        .suggestions-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .suggestion-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #3273dc;
+            margin-bottom: 10px;
+            display: none; /* Initially hide For You section */
+        }
+
+        .suggestion {
+            font-size: 16px;
+            color: #555;
+            cursor: pointer;
+            margin: 5px;
+            display: inline-block;
+            transition: color 0.3s;
+        }
+
+        .suggestion:hover {
+            color: #3273dc;
+            text-decoration: underline;
+        }
+
+        .network-related-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .network-related-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #3273dc;
+            margin-bottom: 10px;
+            display: none; /* Initially hide Network Related section */
+        }
+
+        .network-related {
+            font-size: 16px;
+            color: #555;
+            cursor: pointer;
+            margin: 5px;
+            display: inline-block;
+            transition: color 0.3s;
+        }
+
+        .network-related:hover {
+            color: #3273dc;
+            text-decoration: underline;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="search-container">
+        <form id="searchForm" onsubmit="search(); return false;">
+            <input type="text" id="searchInput" placeholder="Search...">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <div id="searchResults" class="results-container">
+        <!-- Job posts will be displayed here -->
+    </div>
+
+    <div id="suggestions" class="suggestions-container">
+        <div class="suggestion-title" id="forYouTitle">For You</div>
+        <!-- General job suggestions will be displayed here -->
+    </div>
+
+    <div id="networkRelated" class="network-related-container">
+        <div class="network-related-title" id="networkRelatedTitle">Network Related</div>
+        <!-- Network-related job suggestions will be displayed here -->
+    </div>
+
+    <script>
+        // Sample job posts data (replace with your actual data)
+               var jobPosts = [
+            { title: 'IOS Developer', company: 'Our Academia', description: 'Welcome to Nepals Best learning platform. We are an innovative education platform connecting our highly regarded and experienced faculty members and the students from different parts of the world through the electronic media. We envision any person located at any place can get access to the best faculty and highest quality education. We have developed a secured yet user friendly platform for both students and teachers which includes video lectures, notes, test series and live sessions.' },
+            { title: 'Cyber Security', company: 'App Technology', description: 'App Technologies Pvt. Ltd. is a software development and web application development company based in Kathmandu, established in 2013. Our experienced IT consultants offer valuable business solutions, helping businesses compete effectively in the market, connect with customers, and empower employees.' },
+            // { title: 'Sales and Marketing Manager ', company: 'Purnaa enterprise', description: 'Purnaa is a social enterprise, our mission is to provide world-class manufacturing services that empower marginalized people to fresh starts and fulfilled lives. By working with us, you will get to interact with premium international brands, create beautiful products, and empower an incredible social mission for Nepal. For more information, please visit www.purnaa.com' },
+            // { title: 'Customer Service', company: 'Fly-High Airline', description: 'Customer Service Representative - Fly High Airlines Are you passionate about providing exceptional customer experiences? Fly High Airlines is seeking dynamic individuals to join our team as Customer Service Representatives. As a key point of contact for our valued passengers, you will play a crucial role in ensuring smooth travel experiences.' },
+            // { title: 'B2B Marketing Officer', company: 'ABC company Pvt.Ltd.', description: 'Person having basic knowledge regarding Transportation Industry is preferred. Excellent Communication Skills' },
+            { title: 'Network Engineer', company: 'Networking Solutions', description: 'Network Engineer Job Description for Star Pvt. Ltd.: Join our dynamic team at Star Pvt. Ltd. as a Network Architect. In this role, you will be responsible for designing, implementing, and managing our cutting-edge network infrastructure. Bring your expertise to the overall efficiency of our IT ecosystem. If you are passionate about creating robust networks that empower businesses, this opportunity is for you!' },
+            { title: 'Network Admin', company: 'Network Admin Corp', description: 'Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' },
+            { title: 'Network Security', company: 'Security Solutions', description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' },
+            // ... add more job posts
+              { title: 'Sales and Marketing Manager ', company: 'Purnaa enterprise', description: 'Purnaa is a social enterprise, our mission is to provide world-class manufacturing services that empower marginalized people to fresh starts and fulfilled lives. By working with us, you will get to interact with premium international brands, create beautiful products, and empower an incredible social mission for Nepal. For more information, please visit www.purnaa.com' },
+            { title: 'Customer Service', company: 'Fly-High Airline', description: 'Customer Service Representative - Fly High Airlines Are you passionate about providing exceptional customer experiences? Fly High Airlines is seeking dynamic individuals to join our team as Customer Service Representatives. As a key point of contact for our valued passengers, you will play a crucial role in ensuring smooth travel experiences.' },
+            { title: 'B2B Marketing Officer', company: 'ABC company Pvt.Ltd.', description: 'Person having basic knowledge regarding Transportation Industry is preferred. Excellent Communication Skills' },
+        ];
+
+        function search() {
+            // Get the search input value
+            var searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            // Filter job posts based on the search term
+            var matchingResults = jobPosts.filter(function (jobPost) {
+                return jobPost.title.toLowerCase().includes(searchTerm) ||
+                       jobPost.company.toLowerCase().includes(searchTerm) ||
+                       jobPost.description.toLowerCase().includes(searchTerm);
+            });
+
+            // Display the search results
+            displayResults(matchingResults);
+
+            // Show search suggestions
+            showSuggestions(searchTerm);
+        }
+
+        function showSuggestions(searchTerm) {
+            var suggestionsContainer = document.getElementById('suggestions');
+            var networkRelatedContainer = document.getElementById('networkRelated');
+            var forYouTitle = document.getElementById('forYouTitle');
+            var networkRelatedTitle = document.getElementById('networkRelatedTitle');
+            
+            suggestionsContainer.innerHTML = '';
+            networkRelatedContainer.innerHTML = '';
+            forYouTitle.style.display = 'none'; // Hide For You section
+            networkRelatedTitle.style.display = 'none'; // Hide Network Related section
+
+            // Sample logic for generating suggestions (replace with your own logic)
+            var suggestions = jobPosts.filter(function (jobPost) {
+                return jobPost.title.toLowerCase().includes(searchTerm) ||
+                       jobPost.company.toLowerCase().includes(searchTerm) ||
+                       jobPost.description.toLowerCase().includes(searchTerm);
+            });
+
+            // Remove the current search term from the suggestions
+            suggestions = suggestions.filter(function (suggestion) {
+                return !suggestion.title.toLowerCase().includes(searchTerm);
+            });
+
+            // Show up to 5 general job suggestions
+            if (suggestions.length > 0) {
+                forYouTitle.style.display = 'block'; // Show For You section
+                suggestions.slice(0, 5).forEach(function (suggestion) {
+                    var suggestionElement = document.createElement('div');
+                    suggestionElement.className = 'suggestion';
+                    suggestionElement.textContent = suggestion.title;
+                    suggestionElement.onclick = function () {
+                        // When a suggestion is clicked, update the search input and perform a new search
+                        document.getElementById('searchInput').value = suggestion.title;
+                        search();
+                    };
+                    suggestionsContainer.appendChild(suggestionElement);
+                });
+            }
+
+            // Show specific network-related job suggestions for "Networking" search
+            if (searchTerm === 'networking') {
+                networkRelatedTitle.style.display = 'block'; // Show Network Related section
+                jobPosts.slice(3, 5).forEach(function (networkJob) {
+                    var networkJobElement = document.createElement('div');
+                    networkJobElement.className = 'network-related';
+                    networkJobElement.textContent = networkJob.title;
+                    networkJobElement.onclick = function () {
+                        // When a network-related job is clicked, update the search input and perform a new search
+                        document.getElementById('searchInput').value = networkJob.title;
+                        search();
+                    };
+                    networkRelatedContainer.appendChild(networkJobElement);
+                });
+            }
+        }
+
+        function displayResults(results) {
+            var resultsContainer = document.getElementById('searchResults');
+            resultsContainer.innerHTML = '';
+
+            if (results.length > 0) {
+                results.forEach(function (jobPost) {
+                    var resultElement = document.createElement('div');
+                    resultElement.className = 'job-post';
+
+                    // Display job post details
+                    var titleElement = document.createElement('div');
+                    titleElement.className = 'job-title';
+                    titleElement.textContent = jobPost.title;
+                    resultElement.appendChild(titleElement);
+
+                    var companyElement = document.createElement('div');
+                    companyElement.className = 'company-name';
+                    companyElement.textContent = jobPost.company;
+                    resultElement.appendChild(companyElement);
+
+                    var descriptionElement = document.createElement('div');
+                    descriptionElement.textContent = jobPost.description;
+                    resultElement.appendChild(descriptionElement);
+
+                    // Create "Apply Job" button and attach the click event
+                    var applyButton = document.createElement('button');
+                    applyButton.textContent = 'Apply Job';
+                    applyButton.onclick = function () {
+                    openApplyForm(jobPost);
+                    };
+                    resultElement.appendChild(applyButton);
+                    //apply job ends here
+
+                    resultsContainer.appendChild(resultElement);
+                });
+            } else {
+                var noResultsElement = document.createElement('div');
+                noResultsElement.className = 'no-results';
+                noResultsElement.textContent = 'No results found.';
+                resultsContainer.appendChild(noResultsElement);
+            }
+
+            function openApplyForm(jobPost) {
+            // Create a modal or pop-up for the apply job form
+            var applyFormHTML = `
+                <div id="applyFormModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeApplyForm()">&times;</span>
+                        <h2>${jobPost.title} - ${jobPost.company}</h2>
+                        <!-- Add more form fields as needed -->
+                        <form id="applyForm">
+                            <label for="applicantName">Your Name:</label>
+                            <input type="text" id="applicantName" name="applicantName" required>
+                            <label for="applicantEmail">Your Email:</label>
+                            <input type="email" id="applicantEmail" name="applicantEmail" required>
+                            <button type="submit">Submit Application</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+
+             // Redirect to the specified Django URL
+            var applyUrl = `http://127.0.0.1:8000/jobs/5/apply_for_job/`;
+            window.location.href = applyUrl;
+
+            // Append the modal HTML to the body
+            document.body.insertAdjacentHTML('beforeend', applyFormHTML);
+        }
+        function closeApplyForm() {
+            var applyFormModal = document.getElementById('applyFormModal');
+            if (applyFormModal) {
+                applyFormModal.remove();
+            }
+        }
+        }
+    </script>
+</body>
+</html>
+
+
+{% endblock %}

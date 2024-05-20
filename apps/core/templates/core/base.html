@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Title</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        /* Custom Navbar Styles */
+        .navbar {
+            background-color: #3273dc;
+        }
+
+        .navbar-brand a {
+            color: #fff;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .navbar-menu {
+            background-color: #3273dc;
+        }
+
+        .navbar-item {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .navbar-item:hover {
+            background-color: #2762c3;
+        }
+
+        .navbar-burger span {
+            background-color: #fff;
+        }
+
+        /* Custom Button Styles */
+        .button {
+            margin-right: 10px;
+        }
+
+        .button.is-danger {
+            background-color: #ff3860;
+        }
+
+        .button.is-danger:hover {
+            background-color: #e61f4d;
+        }
+
+        .button.is-success {
+            background-color: #23d160;
+        }
+
+        .button.is-success:hover {
+            background-color: #1fa145;
+        }
+
+        /* Custom Notification Badge Styles */
+        .notification-badge {
+            background-color: #ff3860;
+            color: #fff;
+            font-weight: bold;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            margin-left: 5px;
+        }
+
+        /* Custom Style for Search Menu Item */
+        .navbar-item-search {
+            color: #fff;
+        }
+    </style>
+    
+</head>
+
+<body>
+
+    <!-- Navbar starts -->
+    <nav class="navbar is-light" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a href="{% url 'frontpage' %}" class="navbar-item"><strong>Online Jobs</strong></a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navMenu" class="navbar-menu">
+            <div class="navbar-end">
+                <a href="{% url 'search' %}" class="navbar-item navbar-item-search" style="color: #ffffff">Search</a>
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="navbar-item">Dashboard</a>
+                <a href="{% url 'notifications' %}" class="navbar-item">Notifications
+                    <span class="notification-badge">{{ notifications.count }}</span>
+                </a>
+                {% endif %}
+
+                <div class="navbar-item">
+                    <div class="buttons">
+                        {% if request.user.is_authenticated %}
+                        <a href="{% url 'logout' %}" class="button is-danger"><strong>Log Out</strong></a>
+                        {% else %}
+                        <a href="{% url 'signup' %}" class="button is-success"><strong>Sign Up</strong></a>
+                        <a href="{% url 'login' %}" class="button is-light"><strong>Log In</strong></a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar ends -->
+
+    <!-- Main Content -->
+    <section class="section">
+        {% block content %}
+        {% endblock %}
+    </section>
+    <!-- Main Content ends -->
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/vue@net"></script>
+    {% block scripts %}
+    {% endblock %}
+</body>
+
+</html>

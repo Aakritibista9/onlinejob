@@ -1,0 +1,68 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="columns">
+            <div class="column is-8 is-offset-2">
+                <h1 class="title">Apply for Job - {{ job.title }}</h1>
+
+                <form method="post" action=".">
+                    {% csrf_token %}
+
+                    <div class="field">
+                        <label for="id_content" class="label">Content:</label>
+                        <div class="control">
+                            <textarea class="textarea" name="content" id="id_content" placeholder="Tell us why you're a good fit for this job"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="id_experience" class="label">Experience:</label>
+                        <div class="control">
+                            <textarea class="textarea" name="experience" id="id_experience" placeholder="Tell us about your relevant experience"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-success">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block head %}
+    {{ block.super }}
+    <style>
+        /* Add your custom CSS styles here */
+        .container {
+            margin-top: 20px;
+        }
+
+        .title {
+            margin-bottom: 20px;
+        }
+
+        .label {
+            margin-bottom: 5px;
+        }
+
+        .field {
+            margin-bottom: 15px;
+        }
+
+        .textarea, .input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .button {
+            width: auto;
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="columns">
+            <div class="column is-8 is-offset-2">
+                <h1 class="title">View Job - {{ job.title }}</h1>
+
+                <a href="{% url 'edit_job' job.id %}" class="button is-success mb-4">Edit</a>
+
+                <div class="content">
+                    <p class="is-size-4">{{ job.short_description }}</p>
+
+                    <p>{{ job.long_description }}</p>
+
+                    <ul>
+                        <li><b>Company Name:</b> {{ job.company_name }}</li>
+                        <li><b>Company Address:</b> {{ job.company_address }}</li>
+                        <li><b>Company Zipcode:</b> {{ job.company_zipcode }}</li>
+                        <li><b>Company Place:</b> {{ job.company_place }}</li>
+                        <li><b>Company Country:</b> {{ job.company_country }}</li>
+                        <li><b>Company Size:</b> {{ job.get_company_size_display }}</li>
+                    </ul>
+
+                    <h2 class="subtitle">Applications:</h2>
+                    {% for application in job.applications.all %}
+                        <div class="application-card">
+                            <div class="card">
+                                <div class="card-content">
+                                    <p class="title is-4">
+                                        <a href="{% url 'view_application' application.id %}">
+                                            {{ application.created_by.username }}
+                                        </a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="notification is-info">No applications yet for this job.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block head %}
+    {{ block.super }}
+    <style>
+        .button {
+            margin-right: 10px;
+        }
+
+        .content {
+            margin-top: 20px;
+        }
+
+        .application-card {
+            margin-bottom: 10px;
+        }
+
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .notification {
+            margin-top: 20px;
+        }
+    </style>
+{% endblock %}
